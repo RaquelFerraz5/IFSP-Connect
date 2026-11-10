@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/StyleProjeto.css">
+    <title>Projeto Integrador - IFSP Connect</title>
+    <link rel="icon" type="image/png" href="../icones/favicon.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body id="top" class="grid-layout">
+
+    <!-- 1. CABEÇALHO OCUPANDO TODA A LARGURA -->
+    <header class="header-area">
+        <div class="header-left">
+            <div class="Logo">
+                <img src="../imagens/ifsp-connect-azul.png" alt="Imagem Connect em azul" class="logo-connect">
+                <img src="../imagens/Logo_GRIP_CorClara_ComNome.png" alt="Logo do Grupo que desenvolveu o projeto" class="logo-grip">
+            </div>
+    
+            <div id="TPrincipal">
+                <h1 id="principal">IFSP Connect</h1>
+                <h2 class="Curso">Projeto de Desenvolvimento Front-End</h2>
+                <div class="InfoAluno">
+                    <p><strong>Aluno:</strong> Raquel De Oliveira Ferraz</p>
+                    <p><strong>Curso:</strong> Engenharia de Computação</p>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Links de navegação com Flexbox -->
+        <nav class="menu-navegacao">
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="cursos.html">Cursos</a></li>
+                <li><a href="eventos.html">Eventos</a></li>
+                <li><a href="professores.html">Professores</a></li>
+                <li><a href="projeto.html" class="active">Projeto Integrador</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 2. MENU LATERAL DE NAVEGAÇÃO RÁPIDA -->
+    <aside class="sidebar-area">
+        <h3>Atalhos Projeto</h3>
+        <nav class="menu-lateral-links">
+            <ul>
+                <li><a href="#piranometro">☀️ O Projeto</a></li>
+                <li><a href="#Problema">⚠️ O Problema</a></li>
+                <li><a href="#Calculos">📐 Dimensionamento</a></li>
+                <li><a href="#Resultados">📊 Resultados</a></li>
+                <li><a href="#Interacao">💻 Firmware / Serial</a></li>
+                <li><a href="#Equipe">👥 Equipe</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- 3. ÁREA PRINCIPAL DE CONTEÚDO -->
+    <main class="main-area">
+
+        <!-- Seção Hero / Apresentação do Projeto -->
+        <section id="piranometro" class="card hero-project destaque">
+            <div class="project-info">
+                <h1>Piranômetro Open</h1>
+                <h3>Modelagem e Simulação de um Sensor de Irradiância</h3>
+
+                <p>
+                    Este é um projeto acadêmico do IFSP Guarulhos que constrói um medidor de irradiação solar de baixo custo 
+                    utilizando Arduino Uno e LDR GL5528, substituindo equipamentos comerciais que custam centenas de reais por uma solução abaixo de R$ 30,00.
+                </p>
+
+                <div class="btn-group">
+                    <a href="../fontes/relatorio_projeto_integrador.pdf" target="_blank" class="btn-primary">
+                        Baixar Relatório Completo (PDF) 📄
+                    </a>
+                </div>
+            </div>
+
+            <div class="project-media">
+                <img src="../imagens/SensorIrradiancia.png" alt="Simulação do projeto no Tinkercad">
+            </div>
+        </section>
+
+        <!-- Seção O Problema -->
+        <section id="Problema" class="card Problema">
+            <h2>O Problema</h2>
+            <p>
+                Piranômetros comerciais de alta precisão são baseados em termopilhas e têm custo elevado, o que inviabiliza seu uso
+                em projetos educacionais, pesquisas de pequena escala e iniciativas de monitoramento ambiental de baixo orçamento. O projeto investiga
+                se é possível substituir esse instrumento por um arranjo com fotoresistor de sulfeto de cádmio (CdS) e dimensioná-lo analiticamente para evitar a saturação precoce do sinal.
+            </p>
+            <p class="highlight-box">
+                <strong>Resultado alcançado:</strong> Sensibilidade adequada na faixa de 0 a 1000 Lux com custo estimado inferior a R$ 30,00 — uma redução superior a 95% em relação aos modelos profissionais.
+            </p>
+        </section>
+
+        <!-- Seção Como Funciona -->
+        <section class="card ComoFunciona">
+            <h2>Como Funciona</h2>
+            <p>
+                O circuito utiliza a topologia de divisor de tensão combinando o LDR GL5528 com um resistor de carga de 100 kΩ (dimensionado por média geométrica). Essa configuração garante excelente sensibilidade na faixa de 0 a 1000 Lux e evita a saturação precoce na leitura analógica enviada ao microcontrolador.
+            </p>
+        </section>
+
+        <!-- Seção Cálculos -->
+        <section id="Calculos" class="card calculo">
+            <h2>Dimensionamento e Cálculos</h2>
+
+            <div class="formula-box">
+                V_out = V_CC * (R / (R_LDR + R))
+            </div>
+
+            <ul class="lista-variaveis">
+                <li><strong>V_out:</strong> Tensão de saída analógica enviada ao pino A0 (V)</li>
+                <li><strong>V_CC:</strong> Tensão de alimentação contínua do barramento (5V)</li>
+                <li><strong>R_LDR:</strong> Resistência variável do fotoresistor LDR (Ω)</li>
+                <li><strong>R:</strong> Resistência do resistor fixo de carga (100 kΩ)</li>
+            </ul>
+
+            <p>
+                Para garantir a máxima sensibilidade do circuito, o dimensionamento do resistor de carga (R) foi realizado por meio do cálculo da média geométrica entre os extremos nominais de operação teórica (R_escuro = 1 MΩ e R_10 Lux = 15 kΩ), resultando no valor comercial padronizado de 100 kΩ.
+            </p>
+        </section>
+
+        <!-- Seção Componentes -->
+        <div class="components-grid">
+            <div class="component-card component-card-interactive" onclick="abrirModal('arduino')">
+                <img src="../imagens/Arduino.png" alt="Arduino Uno">
+                <h4>Arduino Uno</h4>
+                <p>Clique para ver a ficha técnica 🔍</p>
+            </div>
+        
+            <div class="component-card component-card-interactive" onclick="abrirModal('resistor')">
+                <img src="../imagens/Resistor.png" alt="Resistor 100kΩ">
+                <h4>Resistor 100 kΩ</h4>
+                <p>Clique para ver a ficha técnica 🔍</p>
+            </div>
+        
+            <div class="component-card component-card-interactive" onclick="abrirModal('ldr')">
+                <img src="../imagens/LDR.png" alt="Fotoresistor LDR">
+                <h4>LDR GL5528</h4>
+                <p>Clique para ver a ficha técnica 🔍</p>
+            </div>
+        </div>
+
+        <!-- Seção Resultados -->
+        <section id="Resultados" class="card Resultado">
+            <h2>Simulação e Resultados</h2>
+
+            <p>
+                O dimensionamento analítico e a modelagem matemática permitiram prever com precisão o comportamento do piranômetro. Utilizando a equação do divisor de tensão, simulou-se o circuito no Autodesk Tinkercad Circuits sob diferentes níveis de iluminância.
+            </p>
+
+            <div class="results-media-grid">
+                <div class="media-box">
+                    <h4>Valores Teóricos e Leitura ADC</h4>
+                    <img src="../imagens/TabelaResul.png" alt="Tabela de resultados calculados">
+                </div>
+
+                <div class="media-box">
+                    <h4>Curva de Calibração Logarítmica</h4>
+                    <img src="../imagens/GraficoResul.png" alt="Gráfico da tensão de saída em função da iluminância">
+                </div>
+            </div>
+
+            <p>
+                Conforme os testes, o resistor de 100 kΩ proporcionou excelente sensibilidade na faixa de 0 a 1000 Lux, com V_out variando de 0,45 V a 4,86 V.
+            </p>
+        </section>
+
+        <!-- PAINEL DE COMUNICAÇÃO SERIAL E MEDIÇÃO EM TEMPO REAL -->
+        <section id="Interacao" class="card destaque">
+            <h2>📡 Central de Medição em Tempo Real</h2>
+            <p>Conecte o piranômetro via USB para receber as leituras de irradiância enviadas pela porta serial do
+                microcontrolador em tempo real:</p>
+        
+            <div class="serial-controls">
+                <button type="button" id="btnConectar" class="btn-primary">🔌 Conectar ao Piranômetro</button>
+                <button type="button" id="btnDemo" class="btn-scenario">🎮 Ativar Modo Demo</button>
+                <span id="statusConexao" class="badge-status desconectado">🔴 Desconectado</span>
+            </div>
+        
+            <!-- Cards de Leituras Dinâmicas -->
+            <div class="dash-resultados">
+                <div class="dash-card">
+                    <div class="dash-icon">💡</div>
+                    <h4>Irradiância Lâmpada</h4>
+                    <div class="dash-valor"><span id="valorLampada">--</span> <small>W/m²</small></div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-icon">☀️</div>
+                    <h4>Irradiância Luz Solar</h4>
+                    <div class="dash-valor"><span id="valorSolar">--</span> <small>W/m²</small></div>
+                </div>
+            </div>
+        
+            <!-- Interface do Editor / Monitor Serial Integrado -->
+            <div class="code-editor-container" style="margin-top: 25px;">
+                <div class="editor-header">
+                    <span>Monitor Serial Web (9600 baud)</span>
+                    <button type="button" class="btn-copy" onclick="copiarCodigo()">Copiar Código C/C++ 📋</button>
+                </div>
+        
+                <!-- Terminal de Saída Serial -->
+                <div class="serial-monitor">
+                    <div class="serial-body" id="serialOutput">
+                        > Clique em "Conectar ao Piranômetro" para iniciar a leitura da porta serial...
+                    </div>
+                </div>
+        
+                <pre style="display: none;"><code id="codeBlock">void setup() {
+          Serial.begin(9600); // Inicia comunicação serial a 9600 bps
+        }
+        
+        void loop() {
+          // Exemplo de envio padronizado para o IFSP Connect:
+          // LAMPADA, <valor>
+          // SOLAR, <valor>
+          float irradianciaLampada = 650.0;
+          float irradianciaSolar = 820.0;
+          
+          Serial.print("LAMPADA, ");
+          Serial.println(irradianciaLampada);
+          Serial.print("SOLAR, ");
+          Serial.println(irradianciaSolar);
+          delay(2000);
+        }</code></pre>
+            </div>
+        </section>
+
+        <!-- GRÁFICO DINÂMICO EM TEMPO REAL -->
+        <section id="GraficoTempoReal" class="card destaque">
+            <h2>📈 Gráfico de Irradiância em Tempo Real</h2>
+            <p>Acompanhe a variação instantânea da luz captada pelo piranômetro ao longo do tempo:</p>
+
+            <div class="chart-container-box">
+                <canvas id="graficoIrradiancia"></canvas>
+            </div>
+        </section>
+
+        <!-- GUIA INTERATIVO DO CIRCUITO E PINOUT -->
+        <section id="GuiaCircuito" class="card destaque">
+            <h2>🔌 Guia Interativo do Circuito e Pinout</h2>
+            <p>Selecione um dos componentes ou pinos de ligação para visualizar o seu papel no divisor de tensão do piranômetro:</p>
+
+            <div class="circuit-interactive-container">
+                <!-- Imagem do Circuito Limpa -->
+                <div class="circuit-diagram-wrapper">
+                    <img src="../imagens/SensorIrradiancia.png" alt="Esquema do Circuito Piranômetro Open no Tinkercad" id="imgCircuito">
+                </div>
+
+                <!-- Painel de Seleção + Card de Informações -->
+                <div class="circuit-interactive-panel">
+                    <!-- Botões de Seleção Rápida -->
+                    <div class="pinout-btn-grid">
+                        <button type="button" class="btn-pinout active" onclick="mostrarInfoPino('arduino')">🟦 Arduino Uno</button>
+                        <button type="button" class="btn-pinout" onclick="mostrarInfoPino('vcc')">🔴 Pino 5V (VCC)</button>
+                        <button type="button" class="btn-pinout" onclick="mostrarInfoPino('gnd')">🖤 Pino GND</button>
+                        <button type="button" class="btn-pinout" onclick="mostrarInfoPino('a0')">🟢 Pino A0 ($V_{out}$)</button>
+                        <button type="button" class="btn-pinout" onclick="mostrarInfoPino('resistor')">⚡ Resistor 100 kΩ</button>
+                        <button type="button" class="btn-pinout" onclick="mostrarInfoPino('ldr')">☀️ LDR GL5528</button>
+                    </div>
+
+                    <!-- Card Explicativo com Informações do Item Selecionado -->
+                    <div class="circuit-info-card" id="cardInfoPinout">
+                        <div class="info-pinout-header">
+                            <span class="info-pinout-badge" id="badgePinout">Microcontrolador</span>
+                            <h3 id="tituloPinout">Arduino Uno R3</h3>
+                        </div>
+                        <p id="descPinout">Placa principal de processamento. Executa o conversor Analógico-Digital (ADC) de 10 bits no pino A0, convertendo a tensão recebida (0V a 5V) num valor numérico de 0 a 1023 para transmissão via porta serial.</p>
+                        <ul class="info-pinout-specs" id="specsPinout">
+                            <li>⚡ <strong>Alimentação:</strong> USB 5V ou Vin 7-12V</li>
+                            <li>📊 <strong>Resolução ADC:</strong> 10 bits (4,88 mV por divisão)</li>
+                            <li>📡 <strong>Comunicação:</strong> Serial UART (Baudrate 9600 bps)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ESTRUTURA DO MODAL (POP-UP DOS COMPONENTES) -->
+        <div id="modalComponente" class="modal-overlay" onclick="fecharModalFora(event)">
+            <div class="modal-content">
+                <span class="modal-close" onclick="fecharModal()">&times;</span>
+                <h3 id="modalTitulo">Título do Componente</h3>
+                <img id="modalImagem" src="" alt="Imagem do Componente">
+                <p id="modalDescricao">Descrição técnica detalhada...</p>
+                <ul id="modalEspecificacoes" class="modal-specs">
+                    <!-- Especificações inseridas via JS -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Seção Equipe -->
+        <section id="Equipe" class="card EquipeSeçao">
+            <h2>Equipe do Projeto</h2>
+            <p class="subtitle-team">Graduandos em Engenharia de Computação — IFSP Câmpus Guarulhos</p>
+
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="foto-wrapper foto-guilherme">
+                        <img src="../imagens/Guilherme.png" alt="Guilherme Lima">
+                    </div>
+                    <h4>Guilherme Lima</h4>
+                </div>
+                
+                <div class="team-member">
+                    <div class="foto-wrapper foto-raquel">
+                        <img src="../imagens/Raquel.png" alt="Raquel Ferraz">
+                    </div>
+                    <h4>Raquel Ferraz</h4>
+                </div>
+                
+                <div class="team-member">
+                    <div class="foto-wrapper foto-isabelly">
+                        <img src="../imagens/Isabelly.png" alt="Isabelly Mesquita">
+                    </div>
+                    <h4>Isabelly Mesquita</h4>
+                </div>
+                
+                <div class="team-member">
+                    <div class="foto-wrapper foto-pedro">
+                        <img src="../imagens/Pedro.png" alt="Pedro Oliveira">
+                    </div>
+                    <h4>Pedro Oliveira</h4>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 4. BARRA LATERAL PARA AVISOS DE PESQUISA -->
+    <aside class="avisos-area">
+        <h3>📢 Status da Pesquisa</h3>
+        
+        <div class="card-aviso">
+            <h4>Banca Examinadora</h4>
+            <p>Relatório aprovado para a disciplina de Projeto Integrador.</p>
+            <span class="data-aviso">Concluído</span>
+        </div>
+
+    </aside>
+
+    <!-- Botão Voltar ao Topo -->
+    <a href="#top" class="btn-topo" title="Voltar ao topo">⬆ Voltar ao topo</a>
+
+    <!-- 5. RODAPÉ OCUPANDO TODA A LARGURA -->
+    <footer class="footer-area">
+        <p>© 2026 IFSP Guarulhos • Desenvolvido para a disciplina de Front-End</p>
+    </footer>
+
+    <script src="../js/projeto.js"></script>
+</body>
+
+</html>

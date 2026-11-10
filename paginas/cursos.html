@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/StyleCursos.css">
+    <title>Cursos - IFSP Connect</title>
+    <link rel="icon" type="image/png" href="../icones/favicon.png">
+</head>
+
+<body id="top" class="grid-layout">
+
+    <!-- 1. CABEÇALHO OCUPANDO TODA A LARGURA -->
+    <header class="header-area">
+        <div class="header-left">
+            <div class="Logo">
+                <img src="../imagens/ifsp-connect-azul.png" alt="Imagem Connect em azul">
+            </div>
+    
+            <div id="TPrincipal">
+                <h1 id="principal">IFSP Connect</h1>
+                <h2 class="Curso">Projeto de Desenvolvimento Front-End</h2>
+                <div class="InfoAluno">
+                    <p><strong>Aluno:</strong> Raquel De Oliveira Ferraz</p>
+                    <p><strong>Curso:</strong> Engenharia de Computação</p>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Menu principal com Flexbox -->
+        <nav class="menu-navegacao">
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../paginas/cursos.html" class="active">Cursos</a></li>
+                <li><a href="../paginas/eventos.html">Eventos</a></li>
+                <li><a href="../paginas/professores.html">Professores</a></li>
+                <li><a href="../paginas/projeto.html">Projeto Integrador</a></li>
+                <li><a href="../paginas/contato.html">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 2. MENU LATERAL DE NAVEGAÇÃO RÁPIDA -->
+    <aside class="sidebar-area">
+        <h3>Modalidades</h3>
+        <nav class="menu-lateral-links">
+            <ul>
+                <li><a href="#cursos-tecnicos">🛠️ Cursos Técnicos</a></li>
+                <li><a href="#tecnico-integrado">🏫 Técnico Integrado</a></li>
+                <li><a href="#cursos-superiores">🎓 Cursos Superiores</a></li>
+                <li><a href="#pos-graduacao">📜 Pós-Graduação</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- 3. ÁREA PRINCIPAL DE CONTEÚDO (CONTEÚDO E TABELAS PRESERVADOS INTACTOS) -->
+    <main class="main-area">
+
+        <!-- Cursos Técnicos -->
+        <section id="cursos-tecnicos" class="card CursoTec">
+            <h3>Cursos Técnicos</h3>
+        
+            <p>O curso técnico de nível médio concomitante ou subsequente é oferecido a quem
+                já concluiu o ensino fundamental e tenha concluído ou esteja cursando no mínimo
+                o segundo ano do ensino médio.
+            </p>
+        
+            <p><strong>Os cursos ofertados no câmpus de Guarulhos são:</strong></p>
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">Curso</th>
+                        <th colspan="2">Modalidade</th>
+                        <th>Carga horária</th>
+                        <th>Turno</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">Técnico em Automação Industrial</td>
+                        <td colspan="2">Curso Técnico de Nível Médio Concomitante/Subsequente</td>
+                        <td>1.200 horas</td>
+                        <td>Noturno</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Técnico em Desenvolvimento de Sistemas</td>
+                        <td colspan="2">Curso Técnico de Nível Médio Concomitante/Subsequente</td>
+                        <td>1.200 horas</td>
+                        <td>Noturno</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Técnico em Sistemas de Energia Renovável</td>
+                        <td colspan="2">Curso Técnico de Nível Médio Concomitante/Subsequente</td>
+                        <td>1.200 horas</td>
+                        <td>Vespertino</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Técnico Integrado ao Ensino Médio -->
+        <section id="tecnico-integrado" class="card TecIntegrado">
+            <h3>Técnico Integrado ao Ensino Médio</h3>
+        
+            <p>O curso técnico integrado ao ensino médio é oferecido a quem já concluiu o ensino
+                fundamental. O curso garante tanto a formação do ensino médio quanto a técnica profissional.
+            </p>
+        
+            <p><strong>Os cursos ofertados no câmpus de Guarulhos são:</strong></p>
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">Curso</th>
+                        <th colspan="2">Modalidade</th>
+                        <th>Carga horária</th>
+                        <th>Turno</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">Técnico em Mecatrônica Integrado ao Ensino Médio</td>
+                        <td colspan="2">Médio integral</td>
+                        <td>3863,3 horas</td>
+                        <td>Vespertino</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Técnico em Informática Integrado ao Ensino Médio</td>
+                        <td colspan="2">Médio integral</td>
+                        <td>3863,3 horas</td>
+                        <td>Vespertino</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Cursos Superiores -->
+        <section id="cursos-superiores" class="card Superiores">
+            <h3>Cursos Superiores</h3>
+        
+            <p><strong>Licenciatura</strong></p>
+            <p>O curso destina-se a preparar professores para atuarem na educação básica.</p>
+        
+            <p><strong>Bacharelado</strong></p>
+            <p>
+                Promove a formação de bacharéis na área de ciências experimentais e tecnológicas para trabalhar tanto no setor
+                produtivo, quanto no setor de pesquisa e desenvolvimento.
+            </p>
+        
+            <p><strong>Os cursos ofertados no câmpus de Guarulhos são:</strong></p>
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">Curso</th>
+                        <th colspan="2">Modalidade</th>
+                        <th>Carga horária</th>
+                        <th>Turno</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">Licenciatura em Matemática</td>
+                        <td colspan="2">Presencial</td>
+                        <td>3360,0 horas</td>
+                        <td>Matutino/Noturno</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Tecnologia em Análise e Desenvolvimento de Sistemas</td>
+                        <td colspan="2">Presencial com carga horária a distância</td>
+                        <td>2040,0 horas</td>
+                        <td>Noturno</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Tecnologia em Automação Industrial</td>
+                        <td colspan="2">Presencial</td>
+                        <td>2766,7 horas</td>
+                        <td>Integral</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Bacharelado em Engenharia de Computação</td>
+                        <td colspan="2">Presencial</td>
+                        <td>3620 horas</td>
+                        <td>Integral</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Bacharelado em Engenharia de Controle e Automação</td>
+                        <td colspan="2">Presencial</td>
+                        <td>3680,0 horas</td>
+                        <td>Integral</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Pós-graduação -->
+        <section id="pos-graduacao" class="card Pos">
+            <h3>Pós-graduação</h3>
+        
+            <p>
+                Os cursos de pós-graduação estão voltados para as expectativas de aprimoramento acadêmico e profissional, com
+                caráter de educação continuada. Geralmente, os cursos de pós-graduação lato sensu têm um formato semelhante ao
+                dos cursos tradicionais, com aulas, seminários e conferências, ao lado de trabalhos de pesquisa sobre os temas
+                pertinentes ao curso. Os cursos de pós-graduação têm duração mínima de 360 horas.
+            </p>
+        
+            <p><strong>Os cursos ofertados no câmpus de Guarulhos são:</strong></p>
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">Curso</th>
+                        <th colspan="2">Modalidade</th>
+                        <th>Carga horária</th>
+                        <th>Turno</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">Computação Aplicada</td>
+                        <td colspan="2">Educação à Distância</td>
+                        <td>484 horas</td>
+                        <td>EaD com Encontros presenciais, Noturno (Segunda a Sexta) | Manhã (Sábados)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Tecnologias Aplicadas à Educação</td>
+                        <td colspan="2">Educação à Distância</td>
+                        <td>360 horas</td>
+                        <td>EaD</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <!-- 4. BARRA LATERAL PARA AVISOS -->
+    <aside class="avisos-area">
+        <h3>📢 Avisos de Seleção</h3>
+        
+        <div class="card-aviso">
+            <h4>Processo Seletivo dos Cursos Técnicos Integrados ao Ensino Médio - 2027/1</h4>
+            <p>Aplicação da Prova Objetiva - Tarde</p>
+            <span class="data-aviso">22 de Novembro de 2026 às 14:00 até 17:00</span>
+        </div>
+
+        <div class="card-aviso">
+            <h4>IFSP abre inscrições para 3.235 vagas em cursos técnicos gratuitos</h4>
+            <p> A seleção será realizada por sorteio eletrônico, sem aplicação de prova.</p>
+            <span class="data-aviso">Inscrições até 18/11/2026</span>
+        </div>
+    </aside>
+
+    <!-- Botão Voltar ao Topo -->
+    <a href="#top" class="btn-topo" title="Voltar ao topo">⬆ Voltar ao topo</a>
+
+    <!-- 5. RODAPÉ OCUPANDO TODA A LARGURA -->
+    <footer class="footer-area">
+        <p>© 2026 IFSP Guarulhos • Desenvolvido para a disciplina de Front-End</p>
+    </footer>
+
+</body>
+</html>

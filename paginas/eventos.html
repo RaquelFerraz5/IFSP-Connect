@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/StyleEventos.css">
+    <title>Eventos - IFSP Connect</title>
+    <link rel="icon" type="image/png" href="../icones/favicon.png">
+</head>
+
+<body id="top" class="grid-layout">
+
+    <!-- 1. CABEÇALHO OCUPANDO TODA A LARGURA -->
+    <header class="header-area">
+        <div class="header-left">
+            <div class="Logo">
+                <img src="../imagens/ifsp-connect-azul.png" alt="Imagem Connect em azul">
+            </div>
+    
+            <div id="TPrincipal">
+                <h1 id="principal">IFSP Connect</h1>
+                <h2 class="Curso">Projeto de Desenvolvimento Front-End</h2>
+                <div class="InfoAluno">
+                    <p><strong>Aluno:</strong> Raquel De Oliveira Ferraz</p>
+                    <p><strong>Curso:</strong> Engenharia de Computação</p>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Menu principal com Flexbox -->
+        <nav class="menu-navegacao">
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="cursos.html">Cursos</a></li>
+                <li><a href="eventos.html" class="active">Eventos</a></li>
+                <li><a href="professores.html">Professores</a></li>
+                <li><a href="projeto.html">Projeto Integrador</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 2. MENU LATERAL DE NAVEGAÇÃO RÁPIDA -->
+    <aside class="sidebar-area">
+        <h3>Eventos</h3>
+        <nav class="menu-lateral-links">
+            <ul>
+                <li><a href="#exatecca">🎨 EXATECCA</a></li>
+                <li><a href="#semat">📐 SEMAT</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- 3. ÁREA PRINCIPAL DE CONTEÚDO (CONTEÚDO COMPLETO PRESERVADO) -->
+    <main class="main-area">
+        <!-- Evento 1: Exatecca -->
+        <section id="exatecca" class="card evento-card Exatecca">
+            <h2>EXATECCA</h2>
+            
+            <div class="evento-content">
+                <div class="evento-img">
+                    <img src="../imagens/Exatecca.jpg" alt="Imagem da Exatecca">
+                </div>
+
+                <div class="evento-text">
+                    <p>
+                        <strong>Anais da Exposição Anual de Tecnologia, Educação, Cultura, Ciências e Arte do Instituto Federal de São Paulo - Câmpus Guarulhos (EXATECCA) - ISSN 2764-8443 —</strong> 
+                        é uma publicação realizada pela Coordenação de Pesquisa e Inovação do Instituto Federal de Educação, Ciência e Tecnologia de São Paulo - Câmpus Guarulhos. Tem como objetivo apresentar os trabalhos científicos submetidos e aprovados para apresentação no evento.
+                    </p>
+
+                    <p>
+                        A EXATECCA é organizada por estudantes e servidores do Câmpus Guarulhos e foi criada com o intuito de divulgar para a comunidade interna e externa o que é produzido na instituição, oferecendo espaço para a publicação de trabalhos científicos, artísticos e educativos.
+                    </p>
+
+                    <a href="https://revista.gru.ifsp.edu.br/exatecca" target="_blank" class="btn-revista">
+                        Acessar Revista da EXATECCA 🔗
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Evento 2: Semana da Matemática -->
+        <section id="semat" class="card evento-card SemanaMat">
+            <h2>Semana da Matemática e Educação Matemática (SEMAT)</h2>
+
+            <div class="evento-content">
+                <div class="evento-img">
+                    <img src="../imagens/SemanaMat.jpg" alt="Imagem Semana temática Matemática">
+                </div>
+
+                <div class="evento-text">
+                    <p>
+                        <strong>Anais da Semana da Matemática e Educação Matemática - ISSN 2965-5056 —</strong> 
+                        é uma publicação anual realizada pela equipe do Curso de Licenciatura em Matemática do IFSP Câmpus Guarulhos. A equipe é formada e renovada anualmente por professores, técnicos-administrativos e alunos que organizam a SEMAT.
+                    </p>
+
+                    <p>
+                        O evento visa reunir a comunidade acadêmica e externa para apresentações de trabalhos aprovados pela Comissão de Avaliação e Editorial, compondo os anais oficiais de apresentação da Semana da Matemática.
+                    </p>
+
+                    <a href="https://revista.gru.ifsp.edu.br/semat" target="_blank" class="btn-revista">
+                        Acessar Revista da SEMAT 🔗
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 4. BARRA LATERAL PARA AVISOS -->
+    <aside class="avisos-area">
+        <h3>📢 Submissões & Cronograma</h3>
+        
+        <div class="card-aviso">
+            <h4>Chamada de Trabalhos</h4>
+            <p>Submissões de resumos expandidos abertas para a próxima edição da EXATECCA.</p>
+            <span class="data-aviso">Até 15/11/2026</span>
+        </div>
+
+        <div class="card-aviso">
+            <h4>Minicursos SEMAT</h4>
+            <p>Inscrições abertas para as oficinas e mesas redondas de Educação Matemática.</p>
+            <span class="data-aviso">Vagas limitadas</span>
+        </div>
+
+        <div class="card-aviso">
+            <h4>Certificados de Apresentação</h4>
+            <p>Os certificados dos eventos anteriores já estão disponíveis para download no portal.</p>
+            <span class="data-aviso">Disponível</span>
+        </div>
+    </aside>
+
+    <!-- Botão Voltar ao Topo -->
+    <a href="#top" class="btn-topo" title="Voltar ao topo">⬆ Voltar ao topo</a>
+
+    <!-- 5. RODAPÉ OCUPANDO TODA A LARGURA -->
+    <footer class="footer-area">
+        <p>© 2026 IFSP Guarulhos • Desenvolvido para a disciplina de Front-End</p>
+    </footer>
+
+</body>
+
+</html>

@@ -3,10 +3,8 @@
 const btnConectar = document.getElementById("btnConectar");
 const btnPausar = document.getElementById("btnPausar");
 const btnDemo = document.getElementById("btnDemo");
-const seletorFonte = document.getElementById("seletorFonte");
 const statusConexao = document.getElementById("statusConexao");
 const valorLampada = document.getElementById("valorLampada");
-const valorSolar = document.getElementById("valorSolar");
 const serialOutput = document.getElementById("serialOutput");
 
 let portaSerial = null;
@@ -18,9 +16,7 @@ let medicaoPausada = false;
 let meuGrafico = null;
 const MAX_PONTOS_GRAFICO = 20;
 
-// =========================================================
 // 1. INICIALIZAÇÃO DO GRÁFICO DINÂMICO (CHART.JS)
-// =========================================================
 function inicializarGrafico() {
     const ctx = document.getElementById("graficoIrradiancia");
     if (!ctx || typeof Chart === "undefined") return;
@@ -31,28 +27,15 @@ function inicializarGrafico() {
             labels: [],
             datasets: [
                 {
-                    label: "💡 Lâmpada (W/m²)",
+                    label: "💡 Irradiância Lâmpada (W/m²)",
                     data: [],
                     borderColor: "#10B981",
                     backgroundColor: "rgba(16, 185, 129, 0.15)",
-                    borderWidth: 2,
+                    borderWidth: 3,
                     fill: true,
                     tension: 0.3,
                     pointRadius: 4,
-                    pointHoverRadius: 6,
-                    spanGaps: true
-                },
-                {
-                    label: "☀️ Luz Solar (W/m²)",
-                    data: [],
-                    borderColor: "#1E3A8A",
-                    backgroundColor: "rgba(30, 58, 138, 0.15)",
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    spanGaps: true
+                    pointHoverRadius: 6
                 }
             ]
         },
@@ -86,7 +69,7 @@ function inicializarGrafico() {
 
 inicializarGrafico();
 
-function atualizarDadosGrafico(tipo, valor) {
+function atualizarDadosGrafico(valor) {
     if (!meuGrafico) inicializarGrafico();
     if (!meuGrafico) return;
 
@@ -98,27 +81,17 @@ function atualizarDadosGrafico(tipo, valor) {
 
     const labels = meuGrafico.data.labels;
     const dadosLampada = meuGrafico.data.datasets[0].data;
-    const dadosSolar = meuGrafico.data.datasets[1].data;
 
     labels.push(horaAtual);
-
-    if (tipo === "LAMPADA") {
-        dadosLampada.push(valor);
-        dadosSolar.push(null);
-    } else if (tipo === "SOLAR") {
-        dadosSolar.push(valor);
-        dadosLampada.push(null);
-    }
+    dadosLampada.push(valor);
 
     if (labels.length > MAX_PONTOS_GRAFICO) {
         labels.shift();
         dadosLampada.shift();
-        dadosSolar.shift();
     }
 
     meuGrafico.update();
 }
-
 
 // 2. CONTROLE DE PAUSAR / RETOMAR E WEB SERIAL API
 if (btnConectar) btnConectar.addEventListener("click", conectarPortaSerial);
@@ -130,15 +103,13 @@ if (btnPausar) {
 
         if (medicaoPausada) {
             btnPausar.textContent = "▶️ Retomar Medição";
-            btnPausar.style.backgroundColor = "#F59E0B";
-            btnPausar.style.color = "#FFFFFF";
+            btnPausar.classList.add("pausado");
             statusConexao.textContent = "⏸️ Medição Pausada";
             statusConexao.className = "badge-status demo";
             adicionarLinhaTerminal(">>> Medição pausada para análise do gráfico.");
         } else {
             btnPausar.textContent = "⏸️ Pausar Medição";
-            btnPausar.style.backgroundColor = "";
-            btnPausar.style.color = "";
+            btnPausar.classList.remove("pausado");
             statusConexao.textContent = modoDemoAtivo ? "🟡 Modo Demo Ativo" : "🟢 Conectado ao Piranômetro";
             statusConexao.className = modoDemoAtivo ? "badge-status demo" : "badge-status conectado";
             adicionarLinhaTerminal(">>> Medição retomada.");
@@ -165,8 +136,8 @@ async function conectarPortaSerial() {
 
         medicaoPausada = false;
         if (btnPausar) {
-            btnPausar.disabled = false;
             btnPausar.textContent = "⏸️ Pausar Medição";
+            btnPausar.classList.remove("pausado");
         }
 
         statusConexao.textContent = "🟢 Conectado ao Piranômetro";
@@ -198,13 +169,11 @@ async function conectarPortaSerial() {
     } catch (erro) {
         statusConexao.textContent = "🔴 Falha / Desconectado";
         statusConexao.className = "badge-status desconectado";
-        if (btnPausar) btnPausar.disabled = true;
         adicionarLinhaTerminal("ERRO: " + erro.message);
     }
 }
 
 function processarMedicao(linha) {
-    // Se estiver pausado, ignora as novas leituras para congelar o gráfico
     if (medicaoPausada) return;
 
     const textoLimpo = linha.replace(/[\r\n\x00-\x1F\x7F]/g, "").trim();
@@ -212,41 +181,30 @@ function processarMedicao(linha) {
 
     adicionarLinhaTerminal(textoLimpo);
 
-    // 1. Formato Padrão ("LAMPADA, 650.0" ou "SOLAR, 820.0")
+    // 1. Formato Padrão ("LAMPADA, 650.0")
     if (textoLimpo.includes(",")) {
         const partes = textoLimpo.split(",");
         if (partes.length === 2) {
-            const tipo = partes[0].trim().toUpperCase();
             const valor = parseFloat(partes[1].trim());
             if (!isNaN(valor)) {
-                aplicarLeituraNaTela(tipo, valor);
+                if (valorLampada) valorLampada.textContent = valor.toFixed(1);
+                atualizarDadosGrafico(valor);
             }
         }
         return;
     }
 
-    // 2. Formato Atual do Arduino ("Leitura ADC: 920 | Tensao: 4.50 V")
+    // 2. Formato Atual do Arduino ("Leitura ADC: 928 | Tensao: 4.54 V")
     if (textoLimpo.includes("Tensao:")) {
         const matchTensao = textoLimpo.match(/Tensao:\s*([0-9.]+)/i);
         if (matchTensao && matchTensao[1]) {
             const tensao = parseFloat(matchTensao[1]);
             if (!isNaN(tensao)) {
                 const irradianciaCalculada = Number((tensao * 200.0).toFixed(1));
-                // Usa o seletor da tela para decidir se vai para Lâmpada ou Luz Solar
-                const fonteSelecionada = seletorFonte ? seletorFonte.value : "LAMPADA";
-                aplicarLeituraNaTela(fonteSelecionada, irradianciaCalculada);
+                if (valorLampada) valorLampada.textContent = irradianciaCalculada.toFixed(1);
+                atualizarDadosGrafico(irradianciaCalculada);
             }
         }
-    }
-}
-
-function aplicarLeituraNaTela(tipo, valor) {
-    if (tipo === "LAMPADA") {
-        if (valorLampada) valorLampada.textContent = valor.toFixed(1);
-        atualizarDadosGrafico("LAMPADA", valor);
-    } else if (tipo === "SOLAR") {
-        if (valorSolar) valorSolar.textContent = valor.toFixed(1);
-        atualizarDadosGrafico("SOLAR", valor);
     }
 }
 
@@ -272,8 +230,8 @@ function iniciarModoDemo() {
     medicaoPausada = false;
     btnDemo.textContent = "⏹️ Parar Modo Demo";
     if (btnPausar) {
-        btnPausar.disabled = false;
         btnPausar.textContent = "⏸️ Pausar Medição";
+        btnPausar.classList.remove("pausado");
     }
     statusConexao.textContent = "🟡 Modo Demo Ativo";
     statusConexao.className = "badge-status demo";
@@ -283,10 +241,7 @@ function iniciarModoDemo() {
     intervaloDemo = setInterval(() => {
         if (medicaoPausada) return;
         const valLamp = (600 + Math.random() * 80).toFixed(1);
-        const valSol = (800 + Math.random() * 100).toFixed(1);
-
         processarMedicao(`LAMPADA, ${valLamp}`);
-        processarMedicao(`SOLAR, ${valSol}`);
     }, 2000);
 }
 
@@ -296,10 +251,8 @@ function pararModoDemo() {
     if (intervaloDemo) clearInterval(intervaloDemo);
     btnDemo.textContent = "🎮 Ativar Modo Demo";
     if (btnPausar) {
-        btnPausar.disabled = true;
         btnPausar.textContent = "⏸️ Pausar Medição";
-        btnPausar.style.backgroundColor = "";
-        btnPausar.style.color = "";
+        btnPausar.classList.remove("pausado");
     }
     statusConexao.textContent = "🔴 Desconectado";
     statusConexao.className = "badge-status desconectado";

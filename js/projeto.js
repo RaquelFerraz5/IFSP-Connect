@@ -1,6 +1,4 @@
-// =========================================================
 // INTEGRAÇÃO WEB SERIAL API + GRÁFICO - IFSP CONNECT
-// =========================================================
 
 // Elementos HTML do DOM
 const btnConectar = document.getElementById("btnConectar");
@@ -18,9 +16,7 @@ let modoDemoAtivo = false;
 let meuGrafico = null;
 const MAX_PONTOS_GRAFICO = 20;
 
-// =========================================================
 // 1. INICIALIZAÇÃO DO GRÁFICO DINÂMICO (CHART.JS)
-// =========================================================
 function inicializarGrafico() {
     const ctx = document.getElementById("graficoIrradiancia");
     if (!ctx) return;
@@ -133,9 +129,7 @@ function atualizarDadosGrafico(tipo, valor) {
     meuGrafico.update();
 }
 
-// =========================================================
 // 2. CONEXÃO WEB SERIAL API E LEITURA DE DADOS
-// =========================================================
 if (btnConectar) {
     btnConectar.addEventListener("click", conectarPortaSerial);
 }
@@ -251,9 +245,7 @@ function adicionarLinhaTerminal(texto) {
     }
 }
 
-// =========================================================
 // 3. MODO DEMONSTRAÇÃO (SIMULAÇÃO SEM HARDWARE)
-// =========================================================
 function alternarModoDemo() {
     if (modoDemoAtivo) {
         pararModoDemo();
@@ -296,9 +288,7 @@ function copiarCodigo() {
     });
 }
 
-// =========================================================
 // 4. MODAL DOS COMPONENTES
-// =========================================================
 const componentesDados = {
     arduino: {
         titulo: "Arduino Uno R3",
@@ -365,9 +355,7 @@ function fecharModalFora(event) {
     if (event.target === modal) fecharModal();
 }
 
-// =========================================================
 // 5. GUIA INTERATIVO DO CIRCUITO E PINOUT
-// =========================================================
 const dadosPinout = {
     arduino: {
         badge: "Microcontrolador",

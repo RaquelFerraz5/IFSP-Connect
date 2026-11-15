@@ -94,20 +94,40 @@ function processarMedicao(linha) {
 
     adicionarLinhaTerminal(linha);
 
-    const partes = linha.split(",");
-    if (partes.length !== 2) return;
+    // 1. Verifica se é o formato novo ("LAMPADA, 650.0" ou "SOLAR, 820.0")
+    if (linha.includes(",")) {
+        const partes = linha.split(",");
+        if (partes.length === 2) {
+            const tipo = partes[0].trim().toUpperCase();
+            const valor = parseFloat(partes[1].trim());
 
-    const tipo = partes[0].trim().toUpperCase();
-    const valor = parseFloat(partes[1].trim());
+            if (!isNaN(valor)) {
+                if (tipo === "LAMPADA") {
+                    valorLampada.textContent = valor.toFixed(1);
+                    atualizarDadosGrafico("LAMPADA", valor);
+                } else if (tipo === "SOLAR") {
+                    valorSolar.textContent = valor.toFixed(1);
+                    atualizarDadosGrafico("SOLAR", valor);
+                }
+            }
+        }
+        return;
+    }
 
-    if (isNaN(valor)) return;
+    // 2. Verifica se é o formato atual da placa ("Leitura ADC: 922 | Tensao: 4.51 V")
+    if (linha.includes("Tensao:")) {
+        const matchTensao = linha.match(/Tensao:\s*([0-9.]+)/i);
+        if (matchTensao && matchTensao[1]) {
+            const tensao = parseFloat(matchTensao[1]);
+            if (!isNaN(tensao)) {
+                // Converte a tensão (0 a 5V) para Irradiância estimada (W/m²)
+                const irradianciaCalculada = tensao * 200.0;
 
-    if (tipo === "LAMPADA") {
-        valorLampada.textContent = valor.toFixed(1);
-        atualizarDadosGrafico("LAMPADA", valor); 
-    } else if (tipo === "SOLAR") {
-        valorSolar.textContent = valor.toFixed(1);
-        atualizarDadosGrafico("SOLAR", valor); 
+                // Atualiza o card e o gráfico da Lâmpada
+                valorLampada.textContent = irradianciaCalculada.toFixed(1);
+                atualizarDadosGrafico("LAMPADA", irradianciaCalculada);
+            }
+        }
     }
 }
 

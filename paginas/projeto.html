@@ -178,24 +178,21 @@
             <p>Conecte o piranômetro via USB para receber as leituras de irradiância enviadas pela porta serial do
                 microcontrolador em tempo real:</p>
         
-            <div class="serial-controls">
+           <div class="serial-controls" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px;">
                 <button type="button" id="btnConectar" class="btn-primary">🔌 Conectar ao Piranômetro</button>
-                <button type="button" id="btnDemo" class="btn-scenario">🎮 Ativar Modo Demo</button>
+                <button type="button" id="btnPausar" class="btn-secondary" disabled>⏸️ Pausar Medição</button>
+                <button type="button" id="btnDemo" class="btn-secondary">🎮 Ativar Modo Demo</button>
+
+                <!-- Seletor para direcionar a leitura do Arduino entre Lâmpada e Solar -->
+                <div class="modo-sensor-box" style="display: flex; align-items: center; gap: 8px; background: #F1F5F9; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <label for="seletorFonte" style="font-size: 0.85rem; font-weight: 700; color: var(--primary-blue);">Fonte:</label>
+                    <select id="seletorFonte" style="border: none; background: transparent; font-weight: 700; color: var(--text-main); cursor: pointer; outline: none;">
+                        <option value="LAMPADA">💡 Lâmpada</option>
+                        <option value="SOLAR">☀️ Luz Solar</option>
+                    </select>
+                </div>
+
                 <span id="statusConexao" class="badge-status desconectado">🔴 Desconectado</span>
-            </div>
-        
-            <!-- Cards de Leituras Dinâmicas -->
-            <div class="dash-resultados">
-                <div class="dash-card">
-                    <div class="dash-icon">💡</div>
-                    <h4>Irradiância Lâmpada</h4>
-                    <div class="dash-valor"><span id="valorLampada">--</span> <small>W/m²</small></div>
-                </div>
-                <div class="dash-card">
-                    <div class="dash-icon">☀️</div>
-                    <h4>Irradiância Luz Solar</h4>
-                    <div class="dash-valor"><span id="valorSolar">--</span> <small>W/m²</small></div>
-                </div>
             </div>
         
             <!-- Interface do Editor / Monitor Serial Integrado -->

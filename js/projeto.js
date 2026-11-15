@@ -1,8 +1,9 @@
 // INTEGRAÇÃO WEB SERIAL API + GRÁFICO - IFSP CONNECT
 
-// Elementos HTML do DOM
 const btnConectar = document.getElementById("btnConectar");
+const btnPausar = document.getElementById("btnPausar");
 const btnDemo = document.getElementById("btnDemo");
+const seletorFonte = document.getElementById("seletorFonte");
 const statusConexao = document.getElementById("statusConexao");
 const valorLampada = document.getElementById("valorLampada");
 const valorSolar = document.getElementById("valorSolar");
@@ -12,19 +13,17 @@ let portaSerial = null;
 let leitorSerial = null;
 let intervaloDemo = null;
 let modoDemoAtivo = false;
+let medicaoPausada = false;
 
 let meuGrafico = null;
 const MAX_PONTOS_GRAFICO = 20;
 
+// =========================================================
 // 1. INICIALIZAÇÃO DO GRÁFICO DINÂMICO (CHART.JS)
+// =========================================================
 function inicializarGrafico() {
     const ctx = document.getElementById("graficoIrradiancia");
-    if (!ctx) return;
-
-    if (typeof Chart === "undefined") {
-        console.error("Biblioteca Chart.js não foi carregada no HTML.");
-        return;
-    }
+    if (!ctx || typeof Chart === "undefined") return;
 
     meuGrafico = new Chart(ctx, {
         type: "line",
@@ -40,7 +39,8 @@ function inicializarGrafico() {
                     fill: true,
                     tension: 0.3,
                     pointRadius: 4,
-                    pointHoverRadius: 6
+                    pointHoverRadius: 6,
+                    spanGaps: true
                 },
                 {
                     label: "☀️ Luz Solar (W/m²)",
@@ -51,7 +51,8 @@ function inicializarGrafico() {
                     fill: true,
                     tension: 0.3,
                     pointRadius: 4,
-                    pointHoverRadius: 6
+                    pointHoverRadius: 6,
+                    spanGaps: true
                 }
             ]
         },
@@ -61,19 +62,11 @@ function inicializarGrafico() {
             animation: false,
             scales: {
                 x: {
-                    title: {
-                        display: true,
-                        text: "Horário da Leitura",
-                        color: "#64748B"
-                    },
+                    title: { display: true, text: "Horário da Leitura", color: "#64748B" },
                     grid: { color: "#F1F5F9" }
                 },
                 y: {
-                    title: {
-                        display: true,
-                        text: "Irradiância (W/m²)",
-                        color: "#64748B"
-                    },
+                    title: { display: true, text: "Irradiância (W/m²)", color: "#64748B" },
                     beginAtZero: true,
                     grid: { color: "#E2E8F0" }
                 }
@@ -91,7 +84,6 @@ function inicializarGrafico() {
     });
 }
 
-// Chama a criação do gráfico imediatamente ao carregar o script
 inicializarGrafico();
 
 function atualizarDadosGrafico(tipo, valor) {
@@ -108,18 +100,16 @@ function atualizarDadosGrafico(tipo, valor) {
     const dadosLampada = meuGrafico.data.datasets[0].data;
     const dadosSolar = meuGrafico.data.datasets[1].data;
 
-    // Adiciona um novo ponto no eixo X
     labels.push(horaAtual);
 
     if (tipo === "LAMPADA") {
         dadosLampada.push(valor);
-        dadosSolar.push(null); // Mantém os arrays sincronizados
+        dadosSolar.push(null);
     } else if (tipo === "SOLAR") {
         dadosSolar.push(valor);
         dadosLampada.push(null);
     }
 
-    // Limita a quantidade de pontos visíveis para o gráfico deslizar
     if (labels.length > MAX_PONTOS_GRAFICO) {
         labels.shift();
         dadosLampada.shift();
@@ -129,19 +119,35 @@ function atualizarDadosGrafico(tipo, valor) {
     meuGrafico.update();
 }
 
-// 2. CONEXÃO WEB SERIAL API E LEITURA DE DADOS
-if (btnConectar) {
-    btnConectar.addEventListener("click", conectarPortaSerial);
-}
 
-if (btnDemo) {
-    btnDemo.addEventListener("click", alternarModoDemo);
+// 2. CONTROLE DE PAUSAR / RETOMAR E WEB SERIAL API
+if (btnConectar) btnConectar.addEventListener("click", conectarPortaSerial);
+if (btnDemo) btnDemo.addEventListener("click", alternarModoDemo);
+
+if (btnPausar) {
+    btnPausar.addEventListener("click", () => {
+        medicaoPausada = !medicaoPausada;
+
+        if (medicaoPausada) {
+            btnPausar.textContent = "▶️ Retomar Medição";
+            btnPausar.style.backgroundColor = "#F59E0B";
+            btnPausar.style.color = "#FFFFFF";
+            statusConexao.textContent = "⏸️ Medição Pausada";
+            statusConexao.className = "badge-status demo";
+            adicionarLinhaTerminal(">>> Medição pausada para análise do gráfico.");
+        } else {
+            btnPausar.textContent = "⏸️ Pausar Medição";
+            btnPausar.style.backgroundColor = "";
+            btnPausar.style.color = "";
+            statusConexao.textContent = modoDemoAtivo ? "🟡 Modo Demo Ativo" : "🟢 Conectado ao Piranômetro";
+            statusConexao.className = modoDemoAtivo ? "badge-status demo" : "badge-status conectado";
+            adicionarLinhaTerminal(">>> Medição retomada.");
+        }
+    });
 }
 
 async function conectarPortaSerial() {
-    if (modoDemoAtivo) {
-        pararModoDemo();
-    }
+    if (modoDemoAtivo) pararModoDemo();
 
     if (!("serial" in navigator)) {
         statusConexao.textContent = "❌ Navegador Incompatível (Use Chrome ou Edge)";
@@ -156,6 +162,12 @@ async function conectarPortaSerial() {
 
         portaSerial = await navigator.serial.requestPort();
         await portaSerial.open({ baudRate: 9600 });
+
+        medicaoPausada = false;
+        if (btnPausar) {
+            btnPausar.disabled = false;
+            btnPausar.textContent = "⏸️ Pausar Medição";
+        }
 
         statusConexao.textContent = "🟢 Conectado ao Piranômetro";
         statusConexao.className = "badge-status conectado";
@@ -186,50 +198,55 @@ async function conectarPortaSerial() {
     } catch (erro) {
         statusConexao.textContent = "🔴 Falha / Desconectado";
         statusConexao.className = "badge-status desconectado";
+        if (btnPausar) btnPausar.disabled = true;
         adicionarLinhaTerminal("ERRO: " + erro.message);
-        console.error("Erro na comunicação serial:", erro);
     }
 }
 
 function processarMedicao(linha) {
-    linha = linha.trim();
-    if (!linha) return;
+    // Se estiver pausado, ignora as novas leituras para congelar o gráfico
+    if (medicaoPausada) return;
 
-    adicionarLinhaTerminal(linha);
+    const textoLimpo = linha.replace(/[\r\n\x00-\x1F\x7F]/g, "").trim();
+    if (!textoLimpo) return;
+
+    adicionarLinhaTerminal(textoLimpo);
 
     // 1. Formato Padrão ("LAMPADA, 650.0" ou "SOLAR, 820.0")
-    if (linha.includes(",")) {
-        const partes = linha.split(",");
+    if (textoLimpo.includes(",")) {
+        const partes = textoLimpo.split(",");
         if (partes.length === 2) {
             const tipo = partes[0].trim().toUpperCase();
             const valor = parseFloat(partes[1].trim());
-
             if (!isNaN(valor)) {
-                if (tipo === "LAMPADA") {
-                    if (valorLampada) valorLampada.textContent = valor.toFixed(1);
-                    atualizarDadosGrafico("LAMPADA", valor);
-                } else if (tipo === "SOLAR") {
-                    if (valorSolar) valorSolar.textContent = valor.toFixed(1);
-                    atualizarDadosGrafico("SOLAR", valor);
-                }
+                aplicarLeituraNaTela(tipo, valor);
             }
         }
         return;
     }
 
-    // 2. Formato Atual do Arduino ("Leitura ADC: 922 | Tensao: 4.51 V")
-    if (linha.includes("Tensao:")) {
-        const matchTensao = linha.match(/Tensao:\s*([0-9.]+)/i);
+    // 2. Formato Atual do Arduino ("Leitura ADC: 920 | Tensao: 4.50 V")
+    if (textoLimpo.includes("Tensao:")) {
+        const matchTensao = textoLimpo.match(/Tensao:\s*([0-9.]+)/i);
         if (matchTensao && matchTensao[1]) {
             const tensao = parseFloat(matchTensao[1]);
             if (!isNaN(tensao)) {
-                const irradianciaCalculada = tensao * 200.0;
-                if (valorLampada) {
-                    valorLampada.textContent = irradianciaCalculada.toFixed(1);
-                }
-                atualizarDadosGrafico("LAMPADA", Number(irradianciaCalculada.toFixed(1)));
+                const irradianciaCalculada = Number((tensao * 200.0).toFixed(1));
+                // Usa o seletor da tela para decidir se vai para Lâmpada ou Luz Solar
+                const fonteSelecionada = seletorFonte ? seletorFonte.value : "LAMPADA";
+                aplicarLeituraNaTela(fonteSelecionada, irradianciaCalculada);
             }
         }
+    }
+}
+
+function aplicarLeituraNaTela(tipo, valor) {
+    if (tipo === "LAMPADA") {
+        if (valorLampada) valorLampada.textContent = valor.toFixed(1);
+        atualizarDadosGrafico("LAMPADA", valor);
+    } else if (tipo === "SOLAR") {
+        if (valorSolar) valorSolar.textContent = valor.toFixed(1);
+        atualizarDadosGrafico("SOLAR", valor);
     }
 }
 
@@ -247,22 +264,24 @@ function adicionarLinhaTerminal(texto) {
 
 // 3. MODO DEMONSTRAÇÃO (SIMULAÇÃO SEM HARDWARE)
 function alternarModoDemo() {
-    if (modoDemoAtivo) {
-        pararModoDemo();
-    } else {
-        iniciarModoDemo();
-    }
+    modoDemoAtivo ? pararModoDemo() : iniciarModoDemo();
 }
 
 function iniciarModoDemo() {
     modoDemoAtivo = true;
+    medicaoPausada = false;
     btnDemo.textContent = "⏹️ Parar Modo Demo";
+    if (btnPausar) {
+        btnPausar.disabled = false;
+        btnPausar.textContent = "⏸️ Pausar Medição";
+    }
     statusConexao.textContent = "🟡 Modo Demo Ativo";
     statusConexao.className = "badge-status demo";
     serialOutput.innerHTML = "";
     adicionarLinhaTerminal(">>> Modo de simulação ativado.");
 
     intervaloDemo = setInterval(() => {
+        if (medicaoPausada) return;
         const valLamp = (600 + Math.random() * 80).toFixed(1);
         const valSol = (800 + Math.random() * 100).toFixed(1);
 
@@ -273,8 +292,15 @@ function iniciarModoDemo() {
 
 function pararModoDemo() {
     modoDemoAtivo = false;
+    medicaoPausada = false;
     if (intervaloDemo) clearInterval(intervaloDemo);
     btnDemo.textContent = "🎮 Ativar Modo Demo";
+    if (btnPausar) {
+        btnPausar.disabled = true;
+        btnPausar.textContent = "⏸️ Pausar Medição";
+        btnPausar.style.backgroundColor = "";
+        btnPausar.style.color = "";
+    }
     statusConexao.textContent = "🔴 Desconectado";
     statusConexao.className = "badge-status desconectado";
     adicionarLinhaTerminal(">>> Modo demo finalizado.");
@@ -288,40 +314,25 @@ function copiarCodigo() {
     });
 }
 
-// 4. MODAL DOS COMPONENTES
+// 4. MODAL DOS COMPONENTES E GUIA PINOUT
 const componentesDados = {
     arduino: {
         titulo: "Arduino Uno R3",
         imagem: "../imagens/Arduino.png",
         descricao: "Placa de microcontrolador baseada no ATmega328P. Responsável por ler a tensão analógica do divisor de tensão no pino A0 e converter para um valor de 10 bits (0-1023).",
-        specs: [
-            "Microcontrolador: ATmega328P",
-            "Tensão de Operação: 5V",
-            "Resolução ADC: 10 bits (1024 níveis)",
-            "Comunicação: USB Serial (UART)"
-        ]
+        specs: ["Microcontrolador: ATmega328P", "Tensão de Operação: 5V", "Resolução ADC: 10 bits (1024 níveis)", "Comunicação: USB Serial (UART)"]
     },
     resistor: {
         titulo: "Resistor 100 kΩ",
         imagem: "../imagens/Resistor.png",
         descricao: "Resistor de filme de carbão utilizado na topologia de divisor de tensão junto ao LDR GL5528 para maximizar a sensibilidade de leitura na faixa de 0 a 1000 Lux.",
-        specs: [
-            "Resistência Nominal: 100 kΩ",
-            "Tolerância: ±5%",
-            "Potência: 1/4 W (0.25W)",
-            "Dimensionamento: Média Geométrica"
-        ]
+        specs: ["Resistência Nominal: 100 kΩ", "Tolerância: ±5%", "Potência: 1/4 W (0.25W)", "Dimensionamento: Média Geométrica"]
     },
     ldr: {
         titulo: "Fotoresistor LDR GL5528",
         imagem: "../imagens/LDR.png",
         descricao: "Sensor fotosensível de Sulfeto de Cádmio (CdS) cuja resistência elétrica diminui à medida que a intensidade de luz (iluminância) incidente aumenta.",
-        specs: [
-            "Diâmetro: 5mm",
-            "Resistência na Luz (10 Lux): 8 a 20 kΩ",
-            "Resistência no Escuro: 1 MΩ (mínimo)",
-            "Pico de Espectro: 540nm"
-        ]
+        specs: ["Diâmetro: 5mm", "Resistência na Luz (10 Lux): 8 a 20 kΩ", "Resistência no Escuro: 1 MΩ (mínimo)", "Pico de Espectro: 540nm"]
     }
 };
 
@@ -355,64 +366,42 @@ function fecharModalFora(event) {
     if (event.target === modal) fecharModal();
 }
 
-// 5. GUIA INTERATIVO DO CIRCUITO E PINOUT
 const dadosPinout = {
     arduino: {
         badge: "Microcontrolador",
         titulo: "Arduino Uno R3",
         descricao: "Placa principal de processamento. Executa o conversor Analógico-Digital (ADC) de 10 bits no pino A0, convertendo a tensão recebida (0V a 5V) em um valor numérico de 0 a 1023 para transmissão via porta serial.",
-        specs: [
-            "⚡ <strong>Alimentação:</strong> USB 5V ou Vin 7-12V",
-            "📊 <strong>Resolução ADC:</strong> 10 bits (4,88 mV por divisão)",
-            "📡 <strong>Comunicação:</strong> Serial UART (Baudrate 9600 bps)"
-        ]
+        specs: ["⚡ <strong>Alimentação:</strong> USB 5V ou Vin 7-12V", "📊 <strong>Resolução ADC:</strong> 10 bits (4,88 mV por divisão)", "📡 <strong>Comunicação:</strong> Serial UART (Baudrate 9600 bps)"]
     },
     ldr: {
         badge: "Sensor Fotosensível",
         titulo: "Fotoresistor LDR GL5528",
         descricao: "Componente semicondutor de Sulfeto de Cádmio (CdS). Sua resistência diminui exponencialmente à medida que a iluminação aumenta (de ~1 MΩ no escuro até ~15 kΩ a 10 Lux).",
-        specs: [
-            "☀️ <strong>Faixa de Trabalho:</strong> 0 a 1000 Lux",
-            "⚡ <strong>Conexão:</strong> Ligado entre VCC (+5V) e a saída do divisor (Pino A0)",
-            "💡 <strong>Função:</strong> Variador de resistência proporcional à luz"
-        ]
+        specs: ["☀️ <strong>Faixa de Trabalho:</strong> 0 a 1000 Lux", "⚡ <strong>Conexão:</strong> Ligado entre VCC (+5V) e a saída do divisor (Pino A0)", "💡 <strong>Função:</strong> Variador de resistência proporcional à luz"]
     },
     resistor: {
         badge: "Carga Fixa",
         titulo: "Resistor de Carga (100 kΩ)",
         descricao: "Resistor fixo dimensionado por meio da média geométrica entre os extremos de resistência do LDR. Garante a máxima sensibilidade de saída no divisor de tensão e impede a saturação precoce do sinal.",
-        specs: [
-            "📐 <strong>Valor Nominal:</strong> 100 kΩ (1/4 W)",
-            "⚡ <strong>Conexão:</strong> Ligado entre a saída do divisor (Pino A0) e o GND (0V)",
-            "🎯 <strong>Cálculo:</strong> R = √(R_escuro × R_10Lux)"
-        ]
+        specs: ["📐 <strong>Valor Nominal:</strong> 100 kΩ (1/4 W)", "⚡ <strong>Conexão:</strong> Ligado entre a saída do divisor (Pino A0) e o GND (0V)", "🎯 <strong>Cálculo:</strong> R = √(R_escuro × R_10Lux)"]
     },
     vcc: {
         badge: "Alimentação 5V",
         titulo: "Barramento VCC (+5V)",
         descricao: "Pino de saída de alimentação contínua de +5 Volts do Arduino. Fornece a tensão de referência fixa (VCC) para o topo da malha do divisor de tensão.",
-        specs: [
-            "⚡ <strong>Tensão:</strong> +5,0 V DC (estabilizada)",
-            "🔗 <strong>Ligação:</strong> Conectado diretamente a um dos terminais do LDR"
-        ]
+        specs: ["⚡ <strong>Tensão:</strong> +5,0 V DC (estabilizada)", "🔗 <strong>Ligação:</strong> Conectado diretamente a um dos terminais do LDR"]
     },
     a0: {
         badge: "Entrada Analógica",
         titulo: "Pino Analógico A0 (Vout)",
         descricao: "Nó central do divisor de tensão situado entre o LDR e o Resistor de 100 kΩ. A tensão neste ponto varia continuamente entre 0,45V e 4,86V conforme a irradiância incidente.",
-        specs: [
-            "📉 <strong>Fórmula de Tensão:</strong> Vout = VCC × (R / (RLDR + R))",
-            "📊 <strong>Leitura ADC:</strong> Convertido internamente de 0 a 1023"
-        ]
+        specs: ["📉 <strong>Fórmula de Tensão:</strong> Vout = VCC × (R / (RLDR + R))", "📊 <strong>Leitura ADC:</strong> Convertido internamente de 0 a 1023"]
     },
     gnd: {
         badge: "Referência 0V",
         titulo: "Barramento GND (Terra)",
         descricao: "Pino de referência comum de zero Volts (0V). Fecha o circuito elétrico conectando a base do resistor de carga fixo ao terra do barramento.",
-        specs: [
-            "⚡ <strong>Potencial:</strong> 0 Volts",
-            "🔗 <strong>Ligação:</strong> Conectado à perna inferior do resistor de 100 kΩ"
-        ]
+        specs: ["⚡ <strong>Potencial:</strong> 0 Volts", "🔗 <strong>Ligação:</strong> Conectado à perna inferior do resistor de 100 kΩ"]
     }
 };
 

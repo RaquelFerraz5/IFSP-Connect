@@ -512,6 +512,22 @@ main p strong {
     margin: 0;
 }
 
+/* Deixa o texto do Monitor Serial legível em verde claro */
+.serial-monitor {
+    background-color: #0F172A;
+    padding: 15px;
+    border-radius: 0 0 10px 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.serial-body, .serial-body div {
+    color: #10B981 !important;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
 /* PAINEL DE MEDIÇÃO EM TEMPO REAL (WEB SERIAL API) */
    .serial-controls {
     display: flex;

@@ -211,36 +211,50 @@
                     </div>
                 </div>
         
-                <pre style="display: none;"><code id="codeBlock">void setup() {
-          Serial.begin(9600); // Inicia comunicação serial a 9600 bps
-        }
-        
-       // Pino onde o divisor de tensão do LDR está conectado
-        const int pinoLDR = A0;
-        
-        void setup() {
-          Serial.begin(9600); // Mesma velocidade configurada no JavaScript[cite: 12]
-        }
-        
-        void loop() {
-          // 1. Lê o valor analógico (0 a 1023)
-          int leituraADC = analogRead(pinoLDR);
-          
-          // 2. Converte para tensão (0V a 5V)
-          float tensao = leituraADC * (5.0 / 1023.0);
-        
-          // 3. Conversão estimada para Irradiância (W/m²)
-          // Obs.: Ajuste esse fator de multiplicação conforme a calibração real do seu grupo
-          float irradiancia = tensao * 200.0; 
-        
-          // 4. Envia no formato exato que o projeto.js espera: "TIPO, VALOR"[cite: 11, 16]
-          // Troque "LAMPADA" por "SOLAR" quando for medir a luz do sol[cite: 12, 17]
-          Serial.print("LAMPADA, ");
-          Serial.println(irradiancia, 1);
-        
-          // Aguarda 1 segundo antes da próxima leitura
-          delay(1000);
-        }</code></pre>
+                <pre style="display: none;"><code id="codeBlock">const int PINO_LDR = A0;
+                const float VCC = 5.0;
+                const float R_FIXO = 100000.0; // Resistor de 100 kΩ
+                
+                // Defina o modo de medição atual:
+                // Use "LAMPADA" para testes internos e "SOLAR" para luz do sol
+                String modoMedicao = "LAMPADA"; 
+                
+                void setup() {
+                  Serial.begin(9600);
+                }
+                
+                void loop() {
+                  // 1. Leitura analógica (0 a 1023)
+                  int leituraADC = analogRead(PINO_LDR);
+                
+                  // Evita divisão por zero caso o sensor esteja desconectado
+                  if (leituraADC == 0) leituraADC = 1;
+                
+                  // 2. Cálculo da tensão de saída no pino A0 (Vout)
+                  float vOut = leituraADC * (VCC / 1023.0);
+                
+                  // 3. Cálculo da resistência atual do LDR (Divisor de Tensão)
+                  // Topologia: VCC -> LDR -> Pino A0 -> R_FIXO -> GND
+                  float rLDR = R_FIXO * ((VCC - vOut) / vOut);
+                
+                  // 4. Estimativa de Iluminância (Lux) baseada na curva do LDR GL5528
+                  // Fórmula característica: Lux ≈ (R_10lux / rLDR)^(1 / gamma) * 10
+                  float lux = pow((15000.0 / rLDR), (1.0 / 0.7)) * 10.0;
+                
+                  // 5. Conversão aproximada de Lux para Irradiância (W/m²)
+                  // Fator padrão para luz visível/solar (~0.0079 W/m² por Lux)
+                  float irradiancia = lux * 0.0079;
+                
+                  // 6. Envio padronizado para a Web Serial API do IFSP Connect
+                  // Formato obrigatório: TIPO, VALOR
+                  Serial.print(modoMedicao);
+                  Serial.print(", ");
+                  Serial.println(irradiancia, 2);
+                
+                  // Aguarda 1 segundo antes da próxima leitura
+                  delay(1000);
+                }
+        </code></pre>
             </div>
         </section>
 

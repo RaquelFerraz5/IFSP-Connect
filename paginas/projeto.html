@@ -215,18 +215,31 @@
           Serial.begin(9600); // Inicia comunicação serial a 9600 bps
         }
         
+       // Pino onde o divisor de tensão do LDR está conectado
+        const int pinoLDR = A0;
+        
+        void setup() {
+          Serial.begin(9600); // Mesma velocidade configurada no JavaScript[cite: 12]
+        }
+        
         void loop() {
-          // Exemplo de envio padronizado para o IFSP Connect:
-          // LAMPADA, <valor>
-          // SOLAR, <valor>
-          float irradianciaLampada = 650.0;
-          float irradianciaSolar = 820.0;
+          // 1. Lê o valor analógico (0 a 1023)
+          int leituraADC = analogRead(pinoLDR);
           
+          // 2. Converte para tensão (0V a 5V)
+          float tensao = leituraADC * (5.0 / 1023.0);
+        
+          // 3. Conversão estimada para Irradiância (W/m²)
+          // Obs.: Ajuste esse fator de multiplicação conforme a calibração real do seu grupo
+          float irradiancia = tensao * 200.0; 
+        
+          // 4. Envia no formato exato que o projeto.js espera: "TIPO, VALOR"[cite: 11, 16]
+          // Troque "LAMPADA" por "SOLAR" quando for medir a luz do sol[cite: 12, 17]
           Serial.print("LAMPADA, ");
-          Serial.println(irradianciaLampada);
-          Serial.print("SOLAR, ");
-          Serial.println(irradianciaSolar);
-          delay(2000);
+          Serial.println(irradiancia, 1);
+        
+          // Aguarda 1 segundo antes da próxima leitura
+          delay(1000);
         }</code></pre>
             </div>
         </section>
